@@ -39,6 +39,31 @@ public class BaseballDAO {
 			throw new RuntimeException("Error Connection Database");
 		}
 	}
+	
+	public List<String> readAllNameTeams() {
+		String sql = "select distinct name "
+				+ "from teams "
+				+ "order by name ";
+		List<String> result = new ArrayList<String>();
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("name"));
+			}
+
+			conn.close();
+			return result;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
+	}
 
 	public List<Team> readAllTeams() {
 		String sql = "SELECT * " + "FROM  teams";
@@ -56,6 +81,93 @@ public class BaseballDAO {
 						rs.getString("leagueWinner"), rs.getString("worldSeriesWinnner"), rs.getInt("runs"),
 						rs.getInt("hits"), rs.getInt("homeruns"), rs.getInt("stolenBases"), rs.getInt("hitsAllowed"),
 						rs.getInt("homerunsAllowed"), rs.getString("name"), rs.getString("park")));
+			}
+
+			conn.close();
+			return result;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
+	}
+	
+	public List<Integer> readAllYears() {
+		String sql = "select distinct year "
+				+ "from `teams` "
+				+ "order by year ";
+		List<Integer> result = new ArrayList<Integer>();
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getInt("year"));
+			}
+
+			conn.close();
+			return result;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
+	}
+	
+	public List<Integer> getVertici(String nome) {
+		String sql = "select distinct year "
+				+ "from teams "
+				+ "where name=? "
+				+ "order by year ";
+		List<Integer> result = new ArrayList<Integer>();
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, nome);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getInt("year"));
+			}
+
+			conn.close();
+			return result;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
+	}
+	
+	public Double getPeso(String nome, int v1, int v2) {
+		String sql = "select abs(sum(salary)-( "
+				+ "       select sum(salary) "
+				+ "       from `salaries` s, teams t "
+				+ "       where t.name=? and s.year=? and t.teamcode=s.teamcode and s.year=t.year "
+				+ "       )) as peso "
+				+ "from `salaries` s, teams t "
+				+ "where t.name=? and s.year=? and t.teamcode=s.teamcode and s.year=t.year ";
+		
+//		List<Integer> result = new ArrayList<Integer>();
+		Double result=0.0;
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, nome);
+			st.setInt(2, v1);
+			st.setString(3, nome);
+			st.setInt(4, v2);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				result=rs.getDouble("peso");
 			}
 
 			conn.close();

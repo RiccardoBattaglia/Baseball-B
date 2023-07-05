@@ -5,8 +5,11 @@
 package it.polito.tdp.exam;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.exam.model.Arco;
 import it.polito.tdp.exam.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,10 +38,10 @@ public class FXMLController {
     private Button btnSimula; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbAnno"
-    private ComboBox<?> cmbAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> cmbAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbSquadra"
-    private ComboBox<?> cmbSquadra; // Value injected by FXMLLoader
+    private ComboBox<String> cmbSquadra; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -48,11 +51,60 @@ public class FXMLController {
 
     @FXML
     void handleCreaGrafo(ActionEvent event) {
+    	
+    	String nome=cmbSquadra.getValue();
+    	
+//    	controlli sull'input
+    	if (nome==null) {
+    		this.txtResult.setText("Inersire una squadra.\n");
+    		return;
+    	}
+    	
+//    	creazione grafo
+    	this.model.creaGrafo(nome);
+    	
+    	
+//    	stampa grafo
+    	this.txtResult.setText("Grafo creato.\n");
+    	this.txtResult.appendText("Ci sono " + this.model.nVertici() + " vertici\n");
+    	this.txtResult.appendText("Ci sono " + this.model.nArchi() + " archi\n\n");
+    	
+    	btnDettagli.setDisable(false);
+    	cmbAnno.setDisable(false);
 
     }
 
     @FXML
     void handleDettagli(ActionEvent event) {
+    	
+    	this.txtResult.clear();
+//    	stampa grafo
+    	this.txtResult.setText("Grafo creato.\n");
+    	this.txtResult.appendText("Ci sono " + this.model.nVertici() + " vertici\n");
+    	this.txtResult.appendText("Ci sono " + this.model.nArchi() + " archi\n\n");
+    	  	
+//    	controlli sull'input
+    	if (cmbAnno.getValue()==null) {
+    		this.txtResult.appendText("Inerire un anno.\n");
+    		return;
+    	}
+    	
+    		int anno=cmbAnno.getValue();
+    		
+    		if(!this.model.getVertici().contains(anno)) {
+    			this.txtResult.appendText("Non ci sono dati per questo anno.\n");
+    			return;
+    		}
+    		
+    	
+    	
+    		List<Arco> dettagli = new ArrayList<>();
+    		dettagli.addAll(this.model.getDettagli(cmbSquadra.getValue(), anno));
+    	
+    		for(Arco d : dettagli) {
+    			this.txtResult.appendText(anno+"<-> anno:"+d.getAnno()+"; peso:"+d.getPeso()+"\n");
+    		} 		
+    	
 
     }
 
@@ -70,11 +122,20 @@ public class FXMLController {
         assert cmbSquadra != null : "fx:id=\"cmbSquadra\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtTifosi != null : "fx:id=\"txtTifosi\" was not injected: check your FXML file 'Scene.fxml'.";
+        
+       
 
     }
 
     public void setModel(Model model) {
         this.model = model;
+        
+        cmbSquadra.getItems().addAll(this.model.readAllNameTeams());
+        cmbAnno.getItems().addAll(this.model.readAllYears());
+        
+        btnDettagli.setDisable(true);
+        cmbAnno.setDisable(true);
+        
     }
 
 }
