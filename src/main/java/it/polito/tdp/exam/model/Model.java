@@ -73,10 +73,10 @@ public class Model {
 		return vertici;
 	}
 	
-public  List<Arco> getDettagli(String nome, int anno) {
+public  List<Arco> getDettagli(int anno) {
 
 		
-		List<Integer> vertici = this.dao.getVertici(nome);
+		Set<Integer> vertici = this.grafo.vertexSet();
 	
 	List<Arco> result = new ArrayList<Arco>();
 		
@@ -91,6 +91,7 @@ public  List<Arco> getDettagli(String nome, int anno) {
 				}
 				
 				Collections.sort(result);
+				
 				
 				return result;
 		

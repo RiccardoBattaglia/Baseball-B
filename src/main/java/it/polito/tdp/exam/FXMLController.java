@@ -54,6 +54,7 @@ public class FXMLController {
     	
     	String nome=cmbSquadra.getValue();
     	
+    	
 //    	controlli sull'input
     	if (nome==null) {
     		this.txtResult.setText("Inersire una squadra.\n");
@@ -99,7 +100,7 @@ public class FXMLController {
     	
     	
     		List<Arco> dettagli = new ArrayList<>();
-    		dettagli.addAll(this.model.getDettagli(cmbSquadra.getValue(), anno));
+    		dettagli.addAll(this.model.getDettagli(anno));
     	
     		for(Arco d : dettagli) {
     			this.txtResult.appendText(anno+"<-> anno:"+d.getAnno()+"; peso:"+d.getPeso()+"\n");
