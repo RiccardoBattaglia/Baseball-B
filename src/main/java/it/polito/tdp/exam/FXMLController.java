@@ -61,6 +61,7 @@ public class FXMLController {
     		return;
     	}
     	
+    	
 //    	creazione grafo
     	this.model.creaGrafo(nome);
     	
