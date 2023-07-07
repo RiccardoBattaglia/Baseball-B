@@ -96,4 +96,6 @@ public  List<Arco> getDettagli(int anno) {
 				return result;
 		
 		}
+
+
 }
